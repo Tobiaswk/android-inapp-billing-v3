@@ -66,11 +66,15 @@ class BillingCache extends BillingBase {
 		ArrayList<String> output = new ArrayList<String>();
 		for (String productId : data.keySet()) {
 			PurchaseInfo info = data.get(productId);
-			output.add(productId + LINE_DELIMITER + info.responseData + LINE_DELIMITER + info.signature);
+			output.add(productId + LINE_DELIMITER + info.responseJson + LINE_DELIMITER + info.signature);
 		}
 		saveString(getPreferencesCacheKey(), TextUtils.join(ENTRY_DELIMITER, output));
 		version = Long.toString(new Date().getTime());
 		saveString(getPreferencesVersionKey(), version);
+	}
+
+	public boolean isPurchased(String productId) {
+		return includesProduct(productId) && getDetails(productId).isPurchased();
 	}
 
 	public boolean includesProduct(String productId) {

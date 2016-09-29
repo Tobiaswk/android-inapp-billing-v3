@@ -19,7 +19,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Date;
 
@@ -36,12 +35,11 @@ public class TransactionDetails implements Parcelable {
 	public final PurchaseInfo purchaseInfo;
 
 	public TransactionDetails(PurchaseInfo info) throws JSONException {
-		JSONObject source = new JSONObject(info.responseData);
 		purchaseInfo = info;
-		productId = source.getString(Constants.RESPONSE_PRODUCT_ID);
-		orderId = source.optString(Constants.RESPONSE_ORDER_ID);
-		purchaseToken = source.getString(Constants.RESPONSE_PURCHASE_TOKEN);
-		purchaseTime = new Date(source.getLong(Constants.RESPONSE_PURCHASE_TIME));
+		productId = info.response.productId;
+		orderId = info.response.orderId;
+		purchaseToken = info.response.purchaseToken;
+		purchaseTime = info.response.purchaseTime;
 	}
 
 	@Override

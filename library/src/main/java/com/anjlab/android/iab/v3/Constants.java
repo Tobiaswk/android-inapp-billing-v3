@@ -50,7 +50,11 @@ public class Constants {
     public static final String RESPONSE_PRICE_MICROS = "price_amount_micros";
     public static final String RESPONSE_PURCHASE_TOKEN = "purchaseToken";
     public static final String RESPONSE_PURCHASE_TIME = "purchaseTime";
+    public static final String RESPONSE_PURCHASE_STATE = "purchaseState";
     public static final String RESPONSE_PAYLOAD = "developerPayload";
+    public static final String RESPONSE_PACKAGE_NAME = "packageName";
+    public static final String RESPONSE_DEVELOPER_PAYLOAD = "developerPayload";
+    public static final String RESPONSE_AUTO_RENEWING = "autoRenewing";
 
 	public static final int BILLING_ERROR_FAILED_LOAD_PURCHASES = 100;
 	public static final int BILLING_ERROR_FAILED_TO_INITIALIZE_PURCHASE = 101;

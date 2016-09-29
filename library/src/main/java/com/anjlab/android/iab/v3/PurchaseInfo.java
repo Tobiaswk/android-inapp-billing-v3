@@ -39,11 +39,13 @@ public class PurchaseInfo implements Parcelable {
         PurchasedSuccessfully, Canceled, Refunded, SubscriptionExpired;
     }
 
-    public final String responseData;
+    public final String responseJson;
+    public final ResponseData response;
     public final String signature;
 
     public PurchaseInfo(String responseData, String signature) {
-        this.responseData = responseData;
+        this.responseJson = responseData;
+        this.response = parseResponseData(responseData);
         this.signature = signature;
     }
 
@@ -102,7 +104,7 @@ public class PurchaseInfo implements Parcelable {
         };
     }
 
-    public static PurchaseState getPurchaseState(int state) {
+    private static PurchaseState getPurchaseState(int state) {
         switch (state) {
             case 0:
                 return PurchaseState.PurchasedSuccessfully;
@@ -117,24 +119,28 @@ public class PurchaseInfo implements Parcelable {
         }
     }
 
-    public ResponseData parseResponseData() {
+    private ResponseData parseResponseData(String responseData) {
         try {
             JSONObject json = new JSONObject(responseData);
             ResponseData data = new ResponseData();
-            data.orderId = json.optString("orderId");
-            data.packageName = json.optString("packageName");
-            data.productId = json.optString("productId");
-            long purchaseTimeMillis = json.optLong("purchaseTime", 0);
+            data.orderId = json.optString(Constants.RESPONSE_ORDER_ID);
+            data.packageName = json.optString(Constants.RESPONSE_PACKAGE_NAME);
+            data.productId = json.optString(Constants.RESPONSE_PRODUCT_ID);
+            long purchaseTimeMillis = json.optLong(Constants.RESPONSE_PURCHASE_TIME, 0);
             data.purchaseTime = purchaseTimeMillis != 0 ? new Date(purchaseTimeMillis) : null;
-            data.purchaseState = getPurchaseState(json.optInt("purchaseState", 1));
-            data.developerPayload = json.optString("developerPayload");
-            data.purchaseToken = json.getString("purchaseToken");
-            data.autoRenewing = json.optBoolean("autoRenewing");
+            data.purchaseState = getPurchaseState(json.optInt(Constants.RESPONSE_PURCHASE_STATE, 1));
+            data.developerPayload = json.optString(Constants.RESPONSE_DEVELOPER_PAYLOAD);
+            data.purchaseToken = json.getString(Constants.RESPONSE_PURCHASE_TOKEN);
+            data.autoRenewing = json.optBoolean(Constants.RESPONSE_AUTO_RENEWING);
             return data;
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Failed to parse response data", e);
             return null;
         }
+    }
+
+    public boolean isPurchased() {
+        return response.purchaseState == PurchaseState.PurchasedSuccessfully;
     }
 
     @Override
@@ -144,12 +150,13 @@ public class PurchaseInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.responseData);
+        dest.writeString(this.responseJson);
         dest.writeString(this.signature);
     }
 
     protected PurchaseInfo(Parcel in) {
-        this.responseData = in.readString();
+        this.responseJson = in.readString();
+        this.response = parseResponseData(responseJson);
         this.signature = in.readString();
     }
 

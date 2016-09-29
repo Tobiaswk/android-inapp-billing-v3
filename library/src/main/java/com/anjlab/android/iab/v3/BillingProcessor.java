@@ -138,11 +138,11 @@ public class BillingProcessor extends BillingBase {
 	}
 
 	public boolean isPurchased(String productId) {
-		return cachedProducts.includesProduct(productId);
+		return cachedProducts.isPurchased(productId);
 	}
 
 	public boolean isSubscribed(String productId) {
-		return cachedSubscriptions.includesProduct(productId);
+		return cachedSubscriptions.isPurchased(productId);
 	}
 
 	public List<String> listOwnedProducts() {
@@ -336,10 +336,10 @@ public class BillingProcessor extends BillingBase {
 	}
 
 	private TransactionDetails getPurchaseTransactionDetails(String productId, BillingCache cache) {
-		PurchaseInfo details = cache.getDetails(productId);
-		if (details != null && !TextUtils.isEmpty(details.responseData)) {
+		PurchaseInfo purchaseInfo = cache.getDetails(productId);
+		if (purchaseInfo != null) {
 			try {
-				return new TransactionDetails(details);
+				return new TransactionDetails(purchaseInfo);
 			} catch (JSONException e) {
 				Log.e(LOG_TAG, "Failed to load saved purchase details for " + productId, e);
 			}
@@ -501,7 +501,7 @@ public class BillingProcessor extends BillingBase {
 	public boolean isValidTransactionDetails(TransactionDetails transactionDetails)
     {
         return verifyPurchaseSignature(transactionDetails.productId,
-                                       transactionDetails.purchaseInfo.responseData,
+                                       transactionDetails.purchaseInfo.responseJson,
                                        transactionDetails.purchaseInfo.signature) &&
                checkMerchant(transactionDetails);
     }

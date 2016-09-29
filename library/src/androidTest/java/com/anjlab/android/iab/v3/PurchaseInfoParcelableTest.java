@@ -2,7 +2,6 @@ package com.anjlab.android.iab.v3;
 
 import android.os.Parcel;
 
-import org.json.JSONObject;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -24,7 +23,7 @@ public class PurchaseInfoParcelableTest {
 
         PurchaseInfo newInfo = PurchaseInfo.CREATOR.createFromParcel(parcel);
 
-        assertEquals(purchaseInfo.responseData, newInfo.responseData);
+        assertEquals(purchaseInfo.responseJson, newInfo.responseJson);
         assertEquals(purchaseInfo.signature, newInfo.signature);
     }
 
@@ -32,7 +31,7 @@ public class PurchaseInfoParcelableTest {
     public void testResponseDataParcelable() throws Exception {
         PurchaseInfo purchaseInfo = new PurchaseInfo(purchaseInfoJson, "signature");
 
-        PurchaseInfo.ResponseData responseData = purchaseInfo.parseResponseData();
+        PurchaseInfo.ResponseData responseData = purchaseInfo.response;
 
         Parcel parcel = Parcel.obtain();
         responseData.writeToParcel(parcel, 0);
